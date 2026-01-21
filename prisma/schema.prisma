@@ -85,6 +85,8 @@ model Article {
   id String @id @default(uuid())
   title String
   content String
+  featuredImage String?
+  imageKey String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
