@@ -34,16 +34,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { uploadUrl, key, fileUrl } = await getUploadUrl(
-      filename,
-      contentType,
-    );
+    const response = await getUploadUrl(filename, contentType);
 
-    return NextResponse.json({
-      uploadUrl,
-      key,
-      fileUrl,
-    });
+    if (!response) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    }
+
+    return NextResponse.json(response);
   } catch (e) {
     console.log(e);
   }

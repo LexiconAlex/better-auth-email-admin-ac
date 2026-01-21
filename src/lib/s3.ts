@@ -5,6 +5,9 @@ import {
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
+import { auth } from "./auth";
+import { headers } from "next/headers";
+import { NextResponse } from "next/dist/server/web/spec-extension/response";
 
 const s3Client = new S3Client({
   region: process.env.S3_REGION || "",
@@ -17,6 +20,13 @@ const s3Client = new S3Client({
 });
 
 export async function getUploadUrl(filename: string, contentType: string) {
+  const { success } = await auth.api.userHasPermission({
+    headers: await headers(),
+    body: { permission: { article: ["create"] } },
+  });
+  if (!success) {
+    return;
+  }
   const key = `articles/${Date.now()}-${filename}`;
 
   const command = new PutObjectCommand({
@@ -36,6 +46,13 @@ export async function getUploadUrl(filename: string, contentType: string) {
 }
 
 export async function deleteFile(key: string) {
+  const { success } = await auth.api.userHasPermission({
+    headers: await headers(),
+    body: { permission: { article: ["create"] } },
+  });
+  if (!success) {
+    return;
+  }
   const command = new DeleteObjectCommand({
     Bucket: process.env.S3_BUCKET!,
     Key: key,
