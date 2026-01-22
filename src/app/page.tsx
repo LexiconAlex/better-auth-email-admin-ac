@@ -1,6 +1,8 @@
 import { getAllArticles } from "@/actions/article";
+import CreateArticleForm from "@/components/create-article-form";
 import DeleteButton from "@/components/delete-button";
 import MailButton from "@/components/mail-button";
+import Image from "next/image";
 
 export default async function Page() {
   const articles = await getAllArticles();
@@ -11,9 +13,18 @@ export default async function Page() {
           <div key={article.id}>
             <p>{article.title}</p>
             <p>{article.content}</p>
+            {article.featuredImage && (
+              <Image
+                src={article.featuredImage}
+                alt={article.imageKey!}
+                height={100}
+                width={100}
+              />
+            )}
             <DeleteButton id={article.id} />
           </div>
         ))}
+        <CreateArticleForm />
         <MailButton />
       </main>
     </div>
